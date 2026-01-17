@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Inbox</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <!-- Auto refresh meta tag 30s as fallback, though manual refresh button is better UX -->
+</head>
+
+<body>
+    <div class="container">
+        <div class="loader" id="loader" style="text-align: center;">Loading...</div>
+
+        <div class="card" id="content" style="display: none;">
+            <div id="expirationTimer" class="timer-badge">...</div>
+
+            <h1>Inbox</h1>
+            <p class="subtitle">Messages for <strong id="userName">...</strong></p>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                <span class="link-label" id="messageCount">0 Messages</span>
+                <button onclick="loadMessages()" class="btn btn-secondary"
+                    style="width: auto; padding: 0.5rem 1rem; font-size: 0.8rem;">Refresh</button>
+            </div>
+
+            <div id="messageList" class="message-list">
+                <!-- Messages go here -->
+            </div>
+
+        </div>
+    </div>
+
+    <script src="/static/app.js"></script>
+    <script>
+        const pathParts = window.location.pathname.split('/');
+        const privateId = pathParts[pathParts.length - 1]; // /r/{id}
+
+        async function loadMessages() {
+            const list = document.getElementById('messageList');
+            // Don't clear list immediately to avoid flicker if just refreshing
+
+            try {
+                const response = await fetch(`${API_BASE}/private/${privateId}`);
+                if (response.status === 404 || response.status === 410) {
+                    document.body.innerHTML = `
+                        <div class="container">
+                            <div class="card" style="text-align: center;">
+                                <h1>Link Expired</h1>
+                                <p class="subtitle">This session is no longer active.</p>
+                                <a href="/" class="btn">Go Home</a>
+                            </div>
+                        </div>
+                    `;
+                    return;
+                }
+
+                const data = await response.json();
+
+                document.getElementById('userName').textContent = data.name;
+                document.getElementById('loader').style.display = 'none';
+                document.getElementById('content').style.display = 'block';
+
+                // Initialize timer if not already running
+                if (!window.timerInited) {
+                    updateCountdown(data.expires_at, 'expirationTimer');
+                    window.timerInited = true;
+                }
+
+                const messages = data.messages.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+                document.getElementById('messageCount').textContent = `${messages.length} Message${messages.length !== 1 ? 's' : ''}`;
+
+                if (messages.length === 0) {
+                    list.innerHTML = `<div class="empty-state">No messages yet... share your public link!</div>`;
+                    return;
+                }
+
+                list.innerHTML = messages.map(msg => `
+                    <div class="message-item">
+                        <div class="message-meta">
+                            <span>Anonymous</span>
+                            <span>${formatDate(msg.created_at)}</span>
+                        </div>
+                        <div class="message-content">${msg.content}</div>
+                    </div>
+                `).join('');
+
+            } catch (err) {
+                console.error(err);
+                showToast("Error loading messages");
+            }
+        }
+
+        loadMessages();
+
+        // Auto refresh every 30 seconds
+        setInterval(loadMessages, 30000);
+    </script>
+</body>
+
+</html>
