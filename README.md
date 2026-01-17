@@ -4,7 +4,7 @@ TellMe is a full-stack web application that allows users to receive **anonymous 
 Each generated session creates a **public link** to receive messages and a **private link** to view them.  
 All data is automatically deleted after a selected time period (6, 12, or 24 hours).
 
-This project is built as a **monolithic application** and is designed to be easily upgraded later to Docker and Kubernetes.
+This project is built as a **monolithic application**   and is fully containerized for easy deployment and future scaling.
 
 ---
 
@@ -52,13 +52,14 @@ This project is built as a **monolithic application** and is designed to be easi
 
 ## 📦 Installation
 
-```bash
-git clone https://github.com/AlhassanHussein/tellme_web_app_monolith.git
-cd tellme/
-python3 -m venv venv
-source venv/bin/activate
-pip install -r requirements.txt
-uvicorn backend.main:app --port 8000 --reload
+
+git clone https://github.com/AlhassanHussein/tellme_web_app_dockerized.git
+
+cd tellme_web_app_dockerized/
+
+docker build -t tellme-app .
+docker run -p 8000:8000 tellme-app
+
 
 ## 🛠 Tech Stack
 
@@ -66,7 +67,7 @@ uvicorn backend.main:app --port 8000 --reload
 - **Frontend:** HTML, CSS, JavaScript
 - **Database:** SQLite
 - **Server:** Uvicorn
-- **Architecture:** Monolithic (Cloud-ready)
+- **Architecture:** Dockerized (Cloud-ready)
 
 ---
 
@@ -93,6 +94,7 @@ uvicorn backend.main:app --port 8000 --reload
 │   └── style.css           # Global styles
 ├── database.db             # SQLite database file
 ├── requirements.txt        # Python dependencies
-├── README.md               # Project documentation
-└── venv/                   # Python virtual environment (ignored in git)
+├── README.md         
+├── Dockerfile              # Docker configuration
+└── .dockerignore           # Docker ignore file
 
