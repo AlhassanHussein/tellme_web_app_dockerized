@@ -28,14 +28,25 @@ This project is built as a **monolithic application** and is designed to be easi
 
 ## 🖼️ Screenshots
 
-### Home – Generate Links
-![Home Page](screenshots/home.png)
+### public – Generate Links
+![public Page](screenshots/public.png)
 
-### Public Page – Send Anonymous Message
-![Public Page](screenshots/public.png)
+### links – Generate Links
+![links Page](screenshots/links.png)
 
-### Private Page – Inbox
-![Private Page](screenshots/private.png)
+### send messags – Generate Links
+![send messags Page](screenshots/send_messags.png)
+
+###  sent – Generate Links
+![sent Page](screenshots/sent.png)
+
+### recived messags – Generate Links
+![recived messags Page](screenshots/recived_messags.png)
+
+### private – Generate Links
+![private Page](screenshots/private.png)
+
+
 
 > 📌 Screenshots are located in the `screenshots/` folder.
 
@@ -52,4 +63,24 @@ This project is built as a **monolithic application** and is designed to be easi
 ---
 
 ## 📁 Project Structure
+.
+├── backend/
+│   ├── database.py
+│   ├── main.py
+│   ├── models.py
+│   ├── scheduler.py
+│   └── routers/
+│       └── api.py
+├── frontend/
+│   ├── app.js
+│   ├── i18n.js
+│   ├── index.html
+│   ├── private.html
+│   ├── public.html
+│   └── style.css
+├── venv/                 # Python Virtual Environment (omitted internal libs)
+├── database.db           # SQLite Database file
+├── README.md
+├── requirements.txt
+└── path                  # File/Directory
 
